@@ -1,0 +1,40 @@
+client
+dev <%= @conf_tun %>
+proto udp
+
+remote <%= @conf_server_ip %> <%= @conf_server_port %>
+
+resolv-retry infinite
+
+nobind
+
+user nobody
+group nogroup
+
+persist-key
+persist-tun
+
+
+ns-cert-type server
+
+verb 3
+
+log-append /var/log/openvpn-client.log
+
+
+<%- if @inline_certs %>
+ca [inline]
+cert [inline]
+key [inline]
+<ca>
+<%= @conf_ca %>
+</ca>
+
+<cert>
+<%= @conf_client_cert %>
+</cert>
+
+<key>
+<%= @conf_client_key %>
+</key>
+<% end %>

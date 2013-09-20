@@ -1,0 +1,56 @@
+# This file is managed by Puppet - Do not edit
+
+port 1194
+proto udp
+dev <%= @conf_tun %>
+
+ca [inline]
+cert [inline]
+key [inline]
+dh [inline]
+
+server <%= @conf_server %> 255.255.255.0
+
+ifconfig-pool-persist /var/run/openvpn.server.ipp.txt
+
+<% @conf_push_routes.each do |ip| %>
+push "route <%= ip %> 255.255.255.0"
+<% end %>
+
+<% if @conf_uses_ccd %>
+client-config-dir ccd
+<% end %>
+
+<% @conf_routes.each do |ip| %>
+route <%= ip %> 255.255.255.0 # regional router
+<% end %>
+
+client-to-client
+
+keepalive 10 120
+
+user nobody
+group nogroup
+
+persist-key
+persist-tun
+
+log-append   /var/log/openvpn-server.log
+
+verb 4
+
+<ca>
+<%= @conf_ca %>
+</ca>
+
+<cert>
+<%= @conf_cert %>
+</cert>
+
+<key>
+<%= @conf_key %>
+</key>
+
+<dh>
+<%= @conf_dh %>
+</dh>
